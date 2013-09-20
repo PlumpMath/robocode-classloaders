@@ -25,6 +25,6 @@ public class RhinoCondition extends Condition {
     }
 
     public boolean test() {
-        return (boolean) JavaAdapter.callMethod(null, null, f, new Object[]{}, 0);
+        return (Boolean) JavaAdapter.callMethod(null, null, f, new Object[]{}, 0);
     }
 }
