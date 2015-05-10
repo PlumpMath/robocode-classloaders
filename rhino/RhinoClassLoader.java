@@ -23,7 +23,7 @@ import robocode.robotinterfaces.IInteractiveRobot;
 import robocode.robotinterfaces.IPaintRobot;
 import robocode.util.Utils;
 
-import net.sf.robocode.loaders.RobotClassLoader;
+import net.sf.robocode.host.security.RobotClassLoader;
 
 
 public class RhinoClassLoader extends RobotClassLoader {
@@ -35,43 +35,12 @@ public class RhinoClassLoader extends RobotClassLoader {
     }
 
     public synchronized Class<?> loadRobotMainClass(boolean resolve) throws ClassNotFoundException {
-        try {
-            if (robotClass == null) {
-                robotClass = loadClass(fullClassName, resolve);
-
-                if (!Script.class.isAssignableFrom(robotClass)) {
-                    // that's not robot
-                    return null;
-                }
-                if (resolve) {
-                    // resolve methods to see more referenced classes
-                    robotClass.getMethods();
-
-                    // iterate thru dependencies until we didn't found any new
-                    HashSet<String> clone;
-
-                    do {
-                        clone = new HashSet<String>(referencedClasses);
-                        for (String reference : clone) {
-                            testPackages(reference);
-                            if (!isSystemClass(reference)) {
-                                loadClass(reference, true);
-                            }
-                        }
-                    } while (referencedClasses.size() != clone.size());
-                }
-            } else {
-                warnIfStaticRobotInstanceFields();
-            }
-        } catch (Throwable e) {
-            robotClass = null;
-            throw new ClassNotFoundException(e.getMessage(), e);
-        }
-
+        super.loadRobotMainClass(resolve);
         return getAdapterClass();
     }
 
     public IBasicRobot createRobotInstance() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        Class<?> robotClass = super.loadRobotMainClass(true);
         Class<?> clazz = loadRobotMainClass(true);
 
         Context context = Context.enter();
@@ -87,14 +56,6 @@ public class RhinoClassLoader extends RobotClassLoader {
         } catch (java.lang.reflect.InvocationTargetException e) {
         }
         return null;
-    }
-
-    protected boolean isLanguageLibraryClass(final String name) {
-        return name.startsWith("org.mozilla.javascript") || super.isLanguageLibraryClass(name);
-    }
-
-    protected boolean isSystemClass(String className) {
-        return className.startsWith("org.mozilla.") || super.isSystemClass(className);
     }
 
     public Class<?> getAdapterClass() {
