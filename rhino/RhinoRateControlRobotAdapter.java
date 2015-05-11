@@ -1,6 +1,6 @@
 package net.sf.robocode.loaders.rhino;
 
-import robocode.AdvancedRobot;
+import robocode.RateControlRobot;
 import robocode.BulletHitEvent;
 import robocode.BulletHitBulletEvent;
 import robocode.BulletMissedEvent;
@@ -16,6 +16,7 @@ import robocode.BattleEndedEvent;
 import robocode.RoundEndedEvent;
 import robocode.CustomEvent;
 import robocode.SkippedTurnEvent;
+import robocode.MessageEvent;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -29,15 +30,15 @@ import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
 
 
-public class RhinoAdvancedRobotAdapter extends AdvancedRobot {
+public class RhinoRateControlRobotAdapter extends RateControlRobot {
     private Context context;
     private Scriptable scope;
     private Scriptable robot;
 
-    public RhinoAdvancedRobotAdapter(Context context, Scriptable scope) {
+    public RhinoRateControlRobotAdapter(Context context, Scriptable scope) {
         this.context = context;
         this.scope = scope;
-        robot = new NativeJavaObject(scope, this, RhinoAdvancedRobotAdapter.class);
+        robot = new NativeJavaObject(scope, this, RhinoRateControlRobotAdapter.class);
 	scope.put("self", scope, robot);
     }
 
@@ -243,4 +244,11 @@ public class RhinoAdvancedRobotAdapter extends AdvancedRobot {
         }
     }
 
+    // ITeamEvents
+    public void onMessageReceived(MessageEvent event) {
+        Function f = JavaAdapter.getFunction(scope, "onMessageReceived");
+        if (f != null) {
+            f.call(context, scope, robot, new Object[]{event});
+        }
+    }
 }

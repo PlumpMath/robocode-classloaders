@@ -63,12 +63,16 @@ public class RhinoClassLoader extends RobotClassLoader {
             return RhinoRobotAdapter.class;
         } else if (robotPlatform.equals("rhino.junior")) {
             return RhinoJuniorRobotAdapter.class;
+        } else if (robotPlatform.equals("rhino.advanced")) {
+            return RhinoAdvancedRobotAdapter.class;
         } else if (robotPlatform.equals("rhino.team")) {
             return RhinoTeamRobotAdapter.class;
         } else if (robotPlatform.equals("rhino.droid")) {
             return RhinoDroidRobotAdapter.class;
+        } else if (robotPlatform.equals("rhino.bordersentry")) {
+            return RhinoBorderSentryRobotAdapter.class;
         } else {
-            return RhinoAdvancedRobotAdapter.class;
+            return RhinoRateControlRobotAdapter.class;
         }
     }
 

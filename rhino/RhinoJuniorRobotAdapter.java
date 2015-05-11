@@ -19,6 +19,7 @@ public class RhinoJuniorRobotAdapter extends JuniorRobot {
         this.context = context;
         this.scope = scope;
         robot = new NativeJavaObject(scope, this, RhinoJuniorRobotAdapter.class);
+	scope.put("self", scope, robot);
     }
 
     public void run() {

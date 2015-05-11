@@ -39,6 +39,7 @@ public class RhinoTeamRobotAdapter extends TeamRobot {
         this.context = context;
         this.scope = scope;
         robot = new NativeJavaObject(scope, this, RhinoTeamRobotAdapter.class);
+	scope.put("self", scope, robot);
     }
 
     public void run() {
